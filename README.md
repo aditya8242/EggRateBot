@@ -112,14 +112,14 @@ If manual run works → cron will work.
 ## 📤 Message Format
 
 Example:
-
+```
 🥚 Egg Rate – Pune
 Date: 03-01-2026
 Piece: ₹6.5
 Tray: ₹195
 100 Eggs: ₹650
 Peti: ₹1950
-
+```
 
 If data is unavailable:
 

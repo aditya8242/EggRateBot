@@ -7,7 +7,7 @@ Built to solve a real business problem: no more manually checking websites every
 ## 📌 What This Project Does
 
 Scrapes the latest Pune egg rate from
-https://todayeggrate.in/pune-egg-rate/
+https://www.e2necc.com/home/eggprice
 
 Extracts today’s rates:
 - Piece

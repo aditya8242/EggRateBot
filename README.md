@@ -4,7 +4,6 @@ Built to solve a real business problem: no more manually checking websites every
 ## 📌 What This Project Does
 Scrapes the latest Pune egg rate from
 https://www.e2necc.com/home/eggprice
-
 Extracts today’s rates:
 - Piece
 - Tray
@@ -12,7 +11,12 @@ Extracts today’s rates:
 - Peti
 
 Sends the formatted rate as a Telegram message
-Runs automatically every day, triggered externally to keep GitHub Actions active
+
+Runs automatically every ~15 minutes, triggered externally to keep GitHub Actions active
+
+Automatically adds new subscribers when they message /start — no manual chat_id lookup needed
+
+Supports /rate for on-demand checks anytime
 ## 🧠 Why This Exists
 * Saves time for small egg businesses
 * Eliminates daily manual checking
@@ -28,26 +32,29 @@ Runs automatically every day, triggered externally to keep GitHub Actions active
 - beautifulsoup4
 - Telegram Bot API
 - GitHub Actions (`workflow_dispatch`)
-- cron-job.org (free external scheduler)
+- cron-job.org (free external scheduler, ~15 min interval)
 No databases. No frameworks. No overengineering.
 ## 📂 Project Structure
 ```
 egg-rate-bot/
 │
 ├── main.py                  # Core script
+├── subscribers.json         # Auto-managed list of chat_ids + Telegram update offset
 ├── README.md                # Documentation
 └── .github/
     └── workflows/
         └── egg_rate.yml     # GitHub Actions workflow (manually/externally triggered)
 ```
 ## ⚙️ How It Works (High Level)
-An external scheduler (cron-job.org) calls GitHub's API once a day to trigger the workflow
+An external scheduler (cron-job.org) calls GitHub's API roughly every 15 minutes to trigger the workflow
 Python script:
+- Polls Telegram for new /start and /rate messages, replies accordingly
+- Auto-adds any new chat_id from /start to subscribers.json (committed back to the repo)
 - Fetches the webpage
 - Parses the HTML table
 - Finds today’s date
 - Extracts rates
-- Sends the result to one or more Telegram users
+- Broadcasts once per day, the first run where NECC's rate is actually available
 - If anything fails → sends a clear failure message
 - No silent failures.
 ## 🤖 Telegram Bot Setup (One-Time)
@@ -59,6 +66,7 @@ Python script:
 1. Open the bot
 2. Press Start once
 3. Telegram bots cannot message users who haven’t started the bot
+4. No manual chat_id lookup needed — the bot detects /start automatically and adds them within ~15 minutes
 ## 🔐 Environment Variables (Required)
 This project uses GitHub Secrets — no credentials are hardcoded.
 Add the following Repository Secrets:
@@ -71,7 +79,7 @@ TELEGRAM_CHAT_IDS   Comma-separated chat IDs (e.g. id1,id2)
 GitHub Actions' built-in `schedule` cron auto-disables after 60 days of repo inactivity. To avoid that (and avoid noisy daily commits just to keep it "active"), this project uses:
 
 - The workflow is set to trigger only on `workflow_dispatch` (no `schedule:` block)
-- A free cron service ([cron-job.org](https://cron-job.org)) sends a daily `POST` request to GitHub's Workflow Dispatch API:
+- A free cron service ([cron-job.org](https://cron-job.org)) sends a `POST` request every ~15 minutes to GitHub's Workflow Dispatch API:
 ```
 https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_file}/dispatches
 ```
@@ -95,6 +103,8 @@ Peti: ₹1950
 ```
 If data is unavailable:
 Egg rate unavailable today (site not reachable)
+
+Note: /start and /rate replies arrive within ~15 minutes (polling interval), not instantly — the bot is honest about this in its own messages.
 ## 🛡️ Failure Handling
 This project never sends incorrect data.
 Handled safely:

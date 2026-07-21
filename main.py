@@ -12,13 +12,12 @@ SUBSCRIBERS_FILE = "subscribers.json"
 
 WELCOME_TEXT = (
     "🥚 Welcome! You're subscribed to daily Pune egg rates.\n"
-    "Rates are checked throughout the day and sent as soon as NECC updates them "
-    "(usually by early afternoon). You'll get today's rate automatically once it's live.\n"
-    "Send /rate anytime to check right now."
+    "Rates are checked every 15 minutes and sent automatically once NECC updates them "
+    "(usually by early afternoon). You'll get today's rate within 15 minutes of it going live.\n"
+    "Send /rate anytime to check right now — you'll get a reply within 15 minutes."
 )
 
-NOT_READY_TEXT = "Today's rate isn't updated by NECC yet. I'll broadcast it automatically the moment it's live."
-
+NOT_READY_TEXT = "Today's rate isn't updated by NECC yet. I'll broadcast it automatically within 15 minutes of it going live."
 
 def load_subscribers():
     if os.path.exists(SUBSCRIBERS_FILE):

@@ -1,6 +1,9 @@
 name: Daily Egg Rate
 on:
   workflow_dispatch:
+concurrency:
+  group: egg-rate
+  cancel-in-progress: false
 jobs:
   run-script:
     runs-on: ubuntu-latest
